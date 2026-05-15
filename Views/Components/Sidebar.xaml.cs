@@ -41,5 +41,12 @@ namespace UP_Markov.Views.Components
             MainWindow.Instance.MainFrame.Navigate(
                 new AuthorPage());
         }
+        private void AdminButton_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            MainWindow.Instance.MainFrame.Navigate(
+                new AdminPage());
+        }
     }
 }
