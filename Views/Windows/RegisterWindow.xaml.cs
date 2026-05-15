@@ -1,27 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using UP_Markov.Services;
 
 namespace UP_Markov.Views.Windows
 {
-    /// <summary>
-    /// Логика взаимодействия для RegisterWindow.xaml
-    /// </summary>
     public partial class RegisterWindow : Window
     {
+        private readonly AuthService authService =
+            new AuthService();
+
         public RegisterWindow()
         {
             InitializeComponent();
+        }
+
+        private void RegisterButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            bool result = authService.Register(
+                LoginBox.Text,
+                PasswordBox.Password,
+                EmailBox.Text,
+                DisplayNameBox.Text);
+
+            if (!result)
+            {
+                MessageBox.Show("Пользователь уже существует");
+                return;
+            }
+
+            MessageBox.Show("Аккаунт создан");
+
+            LoginWindow loginWindow =
+                new LoginWindow();
+
+            loginWindow.Show();
+
+            Close();
+        }
+
+        private void BackButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            LoginWindow loginWindow =
+                new LoginWindow();
+
+            loginWindow.Show();
+
+            Close();
         }
     }
 }

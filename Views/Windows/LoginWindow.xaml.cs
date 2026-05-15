@@ -1,27 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using UP_Markov.Data;
+using UP_Markov.Services;
 
 namespace UP_Markov.Views.Windows
 {
-    /// <summary>
-    /// Логика взаимодействия для LoginWindow.xaml
-    /// </summary>
     public partial class LoginWindow : Window
     {
+        private readonly AuthService authService =
+            new AuthService();
+
         public LoginWindow()
         {
             InitializeComponent();
+        }
+
+        private void LoginButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            var user = authService.Login(
+                LoginBox.Text,
+                PasswordBox.Password);
+
+            if (user == null)
+            {
+                MessageBox.Show("Неверный логин или пароль");
+                return;
+            }
+
+            if (user.IsFrozen)
+            {
+                MessageBox.Show("Аккаунт заморожен");
+                return;
+            }
+
+            CurrentUser.User = user;
+
+            MainWindow mainWindow = new MainWindow();
+
+            mainWindow.Show();
+
+            Close();
+        }
+
+        private void RegisterButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            RegisterWindow registerWindow =
+                new RegisterWindow();
+
+            registerWindow.Show();
+
+            Close();
         }
     }
 }

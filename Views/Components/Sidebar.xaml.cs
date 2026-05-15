@@ -1,28 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using UP_Markov.Views.Pages;
+using UP_Markov.Views.Windows;
 
 namespace UP_Markov.Views.Components
 {
-    /// <summary>
-    /// Логика взаимодействия для Sidebar.xaml
-    /// </summary>
     public partial class Sidebar : UserControl
     {
         public Sidebar()
         {
             InitializeComponent();
+        }
+
+        private void CatalogButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            MainWindow.Instance.MainFrame.Navigate(
+                new CatalogPage());
+        }
+
+        private void ProfileButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            MainWindow.Instance.MainFrame.Navigate(
+                new ProfilePage());
         }
     }
 }

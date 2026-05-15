@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UP_Markov.Data
+﻿namespace UP_Markov.Data
 {
-    internal class CurrentUser
+    public static class CurrentUser
     {
+        public static Users User { get; set; }
     }
 }
