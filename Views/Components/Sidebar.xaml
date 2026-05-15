@@ -7,48 +7,68 @@
 
         <StackPanel>
 
-            <Button Height="60"
+            
+
+            <Button x:Name="CatalogButton"
+                    Height="60"
                     Margin="10"
                     ToolTip="Каталог"
                     Click="CatalogButton_Click">
 
                 <TextBlock Text="📚"
                            FontSize="24"/>
+
             </Button>
 
-            <Button Height="60"
+            
+
+            <Button x:Name="ListsButton"
+                    Height="60"
+                    Margin="10"
+                    ToolTip="Списки"
+                    Click="ListsButton_Click">
+
+                <TextBlock Text="📖"
+                           FontSize="24"/>
+
+            </Button>
+
+            
+
+            <Button x:Name="AuthorButton"
+                    Height="60"
+                    Margin="10"
+                    ToolTip="Автор"
+                    Click="AuthorButton_Click">
+
+                <TextBlock Text="✍"
+                           FontSize="24"/>
+
+            </Button>
+
+            
+
+            <Button x:Name="AdminButton"
+                    Height="60"
+                    Margin="10"
+                    ToolTip="Администрирование"
+                    Click="AdminButton_Click">
+
+                <TextBlock Text="🛠"
+                           FontSize="24"/>
+
+            </Button>
+
+            
+
+            <Button x:Name="ProfileButton"
+                    Height="60"
                     Margin="10"
                     ToolTip="Профиль"
                     Click="ProfileButton_Click">
 
                 <TextBlock Text="👤"
                            FontSize="24"/>
-            </Button>
-            <Button Height="60"
-        Margin="10"
-        ToolTip="Списки"
-        Click="ListsButton_Click">
-
-                <TextBlock Text="📚"
-               FontSize="24"/>
-
-            </Button>
-            <Button Height="60"
-        Margin="10"
-        ToolTip="Автор"
-        Click="AuthorButton_Click">
-
-                <TextBlock Text="✍"
-               FontSize="24"/>
-
-            </Button>
-            <Button Height="60"
-        Margin="10"
-        ToolTip="Администрирование"
-        Click="AdminButton_Click">
-
-                <TextBlock Text="🛠"
-               FontSize="24"/>
 
             </Button>
 

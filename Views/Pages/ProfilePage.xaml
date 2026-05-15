@@ -23,6 +23,21 @@
             <TextBlock x:Name="RoleText"
                        FontSize="20"
                        Foreground="White"/>
+            <TextBlock x:Name="FreezeText"
+           FontSize="18"
+           Foreground="Red"
+           Margin="0 20 0 20"/>
+
+            <Button x:Name="AuthorRequestButton"
+        Content="Подать заявку на автора"
+        Height="35"
+        Margin="0 0 0 10"
+        Click="AuthorRequestButton_Click"/>
+
+            <Button x:Name="UnfreezeRequestButton"
+        Content="Подать заявку на разморозку"
+        Height="35"
+        Click="UnfreezeRequestButton_Click"/>
 
         </StackPanel>
 

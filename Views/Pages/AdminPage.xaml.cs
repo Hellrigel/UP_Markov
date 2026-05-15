@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using UP_Markov.Data;
-using UP_Markov.Views.Windows;
 
 namespace UP_Markov.Views.Pages
 {
@@ -16,25 +15,15 @@ namespace UP_Markov.Views.Pages
         {
             InitializeComponent();
 
-            CheckAccess();
-
             LoadComplaints();
 
             LoadUsers();
-        }
 
-        
+            LoadFrozenBooks();
 
-        private void CheckAccess()
-        {
-            if (CurrentUser.User.RoleId != 3)
-            {
-                MessageBox.Show(
-                    "Нет доступа");
+            LoadAuthorRequests();
 
-                MainWindow.Instance.MainFrame.Navigate(
-                    new CatalogPage());
-            }
+            LoadUnfreezeRequests();
         }
 
         
@@ -45,7 +34,6 @@ namespace UP_Markov.Views.Pages
 
             var complaints = db.Complaints
                 .Where(x => !x.IsResolved)
-                .OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             foreach (var complaint in complaints)
@@ -55,60 +43,34 @@ namespace UP_Markov.Views.Pages
                     BorderBrush = Brushes.Gray,
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(10),
-                    Margin = new Thickness(0, 0, 0, 15),
-                    Padding = new Thickness(15)
+                    Padding = new Thickness(15),
+                    Margin = new Thickness(0, 0, 0, 15)
                 };
 
                 StackPanel panel =
                     new StackPanel();
 
-                TextBlock info =
+                TextBlock text =
                     new TextBlock()
                     {
                         Foreground = Brushes.White,
-                        TextWrapping =
-                            TextWrapping.Wrap
+                        TextWrapping = TextWrapping.Wrap
                     };
 
-                string target = "";
+                text.Text =
+                    $"Жалоба от: " +
+                    $"{complaint.Users.Login}\n" +
 
-                
+                    $"Причина: " +
+                    $"{complaint.Reason}";
 
-                if (complaint.BookId != null)
-                {
-                    target =
-                        $"Книга: {complaint.Books.Title}";
-                }
-
-               
-
-                if (complaint.ReviewId != null)
-                {
-                    target =
-                        $"Отзыв ID: {complaint.ReviewId}";
-                }
-
-                
-
-                if (complaint.TargetUserId != null)
-                {
-                    target =
-                        $"Пользователь: {complaint.Users1.Login}";
-                }
-
-                info.Text =
-                    $"Жалоба от: {complaint.Users.Login}\n" +
-                    $"{target}\n" +
-                    $"Причина: {complaint.Reason}";
-
-                Button freeze =
+                Button approve =
                     new Button()
                     {
-                        Content = "Заморозить",
+                        Content = "Принять",
                         Tag = complaint,
                         Height = 35,
-                        Margin =
-                            new Thickness(0, 10, 0, 5)
+                        Margin = new Thickness(0, 10, 0, 5)
                     };
 
                 Button reject =
@@ -119,13 +81,13 @@ namespace UP_Markov.Views.Pages
                         Height = 35
                     };
 
-                freeze.Click += Freeze_Click;
+                approve.Click += ApproveComplaint_Click;
 
-                reject.Click += Reject_Click;
+                reject.Click += RejectComplaint_Click;
 
-                panel.Children.Add(info);
+                panel.Children.Add(text);
 
-                panel.Children.Add(freeze);
+                panel.Children.Add(approve);
 
                 panel.Children.Add(reject);
 
@@ -135,107 +97,14 @@ namespace UP_Markov.Views.Pages
             }
         }
 
-        
-
-        private void LoadUsers()
-        {
-            UsersPanel.Children.Clear();
-
-            foreach (var user in db.Users.ToList())
-            {
-                Border border = new Border
-                {
-                    BorderBrush = Brushes.Gray,
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(10),
-                    Margin = new Thickness(0, 0, 0, 15),
-                    Padding = new Thickness(15)
-                };
-
-                StackPanel panel =
-                    new StackPanel();
-
-                TextBlock info =
-                    new TextBlock()
-                    {
-                        Foreground = Brushes.White,
-                        Text =
-                            $"{user.Login} | " +
-                            $"{user.Email} | " +
-                            $"{user.Roles.Name}"
-                    };
-
-                ComboBox roleBox =
-                    new ComboBox()
-                    {
-                        Width = 150,
-                        Margin =
-                            new Thickness(0, 10, 0, 10),
-
-                        Tag = user
-                    };
-
-                foreach (var role in db.Roles)
-                {
-                    roleBox.Items.Add(role.Name);
-                }
-
-                roleBox.SelectedItem =
-                    user.Roles.Name;
-
-                Button saveRole =
-                    new Button()
-                    {
-                        Content =
-                            "Сохранить роль",
-
-                        Height = 35,
-
-                        Tag = roleBox
-                    };
-
-                Button freeze =
-                    new Button()
-                    {
-                        Content =
-                            user.IsFrozen
-                                ? "Разморозить"
-                                : "Заморозить",
-
-                        Height = 35,
-
-                        Margin =
-                            new Thickness(0, 10, 0, 0),
-
-                        Tag = user
-                    };
-
-                saveRole.Click += SaveRole_Click;
-
-                freeze.Click += FreezeUser_Click;
-
-                panel.Children.Add(info);
-
-                panel.Children.Add(roleBox);
-
-                panel.Children.Add(saveRole);
-
-                panel.Children.Add(freeze);
-
-                border.Child = panel;
-
-                UsersPanel.Children.Add(border);
-            }
-        }
-
-        
-
-        private void Freeze_Click(
+        private void ApproveComplaint_Click(
             object sender,
             RoutedEventArgs e)
         {
             Complaints complaint =
                 (Complaints)((Button)sender).Tag;
+
+            complaint.IsResolved = true;
 
             
 
@@ -264,19 +133,19 @@ namespace UP_Markov.Views.Pages
                     complaint.Reason;
             }
 
-            complaint.IsResolved = true;
-
             db.SaveChanges();
 
             LoadComplaints();
 
+            LoadUsers();
+
+            LoadFrozenBooks();
+
             MessageBox.Show(
-                "Заморозка выполнена");
+                "Жалоба принята");
         }
 
-        
-
-        private void Reject_Click(
+        private void RejectComplaint_Click(
             object sender,
             RoutedEventArgs e)
         {
@@ -293,36 +162,62 @@ namespace UP_Markov.Views.Pages
                 "Жалоба отклонена");
         }
 
-       
+        
 
-        private void SaveRole_Click(
-            object sender,
-            RoutedEventArgs e)
+        private void LoadUsers()
         {
-            ComboBox box =
-                (ComboBox)((Button)sender).Tag;
+            UsersPanel.Children.Clear();
 
-            Users user =
-                (Users)box.Tag;
+            foreach (var user in db.Users)
+            {
+                Border border = new Border
+                {
+                    BorderBrush = Brushes.Gray,
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(10),
+                    Padding = new Thickness(15),
+                    Margin = new Thickness(0, 0, 0, 15)
+                };
 
-            string roleName =
-                box.SelectedItem.ToString();
+                StackPanel panel =
+                    new StackPanel();
 
-            Roles role =
-                db.Roles.First(x =>
-                    x.Name == roleName);
+                TextBlock text =
+                    new TextBlock()
+                    {
+                        Foreground = Brushes.White,
+                        Text =
+                            $"{user.Login} | " +
+                            $"{user.Roles.Name}"
+                    };
 
-            user.RoleId = role.Id;
+                Button freeze =
+                    new Button()
+                    {
+                        Content =
+                            user.IsFrozen
+                                ? "Разморозить"
+                                : "Заморозить",
 
-            db.SaveChanges();
+                        Tag = user,
 
-            MessageBox.Show(
-                "Роль обновлена");
+                        Height = 35,
+
+                        Margin =
+                            new Thickness(0, 10, 0, 0)
+                    };
+
+                freeze.Click += FreezeUser_Click;
+
+                panel.Children.Add(text);
+
+                panel.Children.Add(freeze);
+
+                border.Child = panel;
+
+                UsersPanel.Children.Add(border);
+            }
         }
-
-        
-        
-        
 
         private void FreezeUser_Click(
             object sender,
@@ -331,18 +226,17 @@ namespace UP_Markov.Views.Pages
             Users user =
                 (Users)((Button)sender).Tag;
 
-            user.IsFrozen =
-                !user.IsFrozen;
+            user.IsFrozen = !user.IsFrozen;
 
-            if (!user.IsFrozen)
+            if (user.IsFrozen)
             {
-                user.FreezeReason = null;
+                user.FreezeReason =
+                    "Аккаунт заморожен администратором";
             }
 
             else
             {
-                user.FreezeReason =
-                    "Заморожено администратором";
+                user.FreezeReason = null;
             }
 
             db.SaveChanges();
@@ -351,6 +245,292 @@ namespace UP_Markov.Views.Pages
 
             MessageBox.Show(
                 "Статус обновлен");
+        }
+
+        
+
+        private void LoadFrozenBooks()
+        {
+            FrozenBooksPanel.Children.Clear();
+
+            var books = db.Books
+                .Where(x => x.IsFrozen)
+                .ToList();
+
+            foreach (var book in books)
+            {
+                Border border = new Border
+                {
+                    BorderBrush = Brushes.Gray,
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(10),
+                    Padding = new Thickness(15),
+                    Margin = new Thickness(0, 0, 0, 15)
+                };
+
+                StackPanel panel =
+                    new StackPanel();
+
+                TextBlock text =
+                    new TextBlock()
+                    {
+                        Foreground = Brushes.White,
+
+                        Text =
+                            $"{book.Title}\n" +
+                            $"Причина: {book.FreezeReason}"
+                    };
+
+                Button unfreeze =
+                    new Button()
+                    {
+                        Content = "Разморозить",
+                        Tag = book,
+                        Height = 35,
+                        Margin = new Thickness(0, 10, 0, 0)
+                    };
+
+                unfreeze.Click += UnfreezeBook_Click;
+
+                panel.Children.Add(text);
+
+                panel.Children.Add(unfreeze);
+
+                border.Child = panel;
+
+                FrozenBooksPanel.Children.Add(border);
+            }
+        }
+
+        private void UnfreezeBook_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Books book =
+                (Books)((Button)sender).Tag;
+
+            book.IsFrozen = false;
+
+            book.FreezeReason = null;
+
+            db.SaveChanges();
+
+            LoadFrozenBooks();
+
+            MessageBox.Show(
+                "Книга разморожена");
+        }
+
+        
+
+        private void LoadAuthorRequests()
+        {
+            AuthorRequestsPanel.Children.Clear();
+
+            var requests = db.AuthorRequests
+                .Where(x => x.IsApproved == null)
+                .ToList();
+
+            foreach (var request in requests)
+            {
+                Border border = new Border
+                {
+                    BorderBrush = Brushes.Gray,
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(10),
+                    Margin = new Thickness(0, 0, 0, 15),
+                    Padding = new Thickness(15)
+                };
+
+                StackPanel panel =
+                    new StackPanel();
+
+                TextBlock text =
+                    new TextBlock()
+                    {
+                        Foreground = Brushes.White,
+
+                        Text =
+                            $"Заявка от: " +
+                            $"{request.Users.Login}"
+                    };
+
+                Button approve =
+                    new Button()
+                    {
+                        Content = "Принять",
+                        Tag = request,
+                        Height = 35,
+                        Margin = new Thickness(0, 10, 0, 5)
+                    };
+
+                Button reject =
+                    new Button()
+                    {
+                        Content = "Отклонить",
+                        Tag = request,
+                        Height = 35
+                    };
+
+                approve.Click += ApproveAuthor_Click;
+
+                reject.Click += RejectAuthor_Click;
+
+                panel.Children.Add(text);
+
+                panel.Children.Add(approve);
+
+                panel.Children.Add(reject);
+
+                border.Child = panel;
+
+                AuthorRequestsPanel.Children.Add(border);
+            }
+        }
+
+        private void ApproveAuthor_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            AuthorRequests request =
+                (AuthorRequests)((Button)sender).Tag;
+
+            request.IsApproved = true;
+
+            request.Users.RoleId = 2;
+
+            db.SaveChanges();
+
+            LoadAuthorRequests();
+
+            LoadUsers();
+
+            MessageBox.Show(
+                "Роль автора выдана");
+        }
+
+        private void RejectAuthor_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            AuthorRequests request =
+                (AuthorRequests)((Button)sender).Tag;
+
+            request.IsApproved = false;
+
+            db.SaveChanges();
+
+            LoadAuthorRequests();
+
+            MessageBox.Show(
+                "Заявка отклонена");
+        }
+
+        
+
+        private void LoadUnfreezeRequests()
+        {
+            UnfreezeRequestsPanel.Children.Clear();
+
+            var requests = db.UnfreezeRequests
+                .Where(x => x.IsApproved == null)
+                .ToList();
+
+            foreach (var request in requests)
+            {
+                Border border = new Border
+                {
+                    BorderBrush = Brushes.Gray,
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(10),
+                    Margin = new Thickness(0, 0, 0, 15),
+                    Padding = new Thickness(15)
+                };
+
+                StackPanel panel =
+                    new StackPanel();
+
+                TextBlock text =
+                    new TextBlock()
+                    {
+                        Foreground = Brushes.White,
+
+                        Text =
+                            $"Пользователь: " +
+                            $"{request.Users.Login}"
+                    };
+
+                Button approve =
+                    new Button()
+                    {
+                        Content = "Разморозить",
+                        Tag = request,
+                        Height = 35,
+                        Margin = new Thickness(0, 10, 0, 5)
+                    };
+
+                Button reject =
+                    new Button()
+                    {
+                        Content = "Отклонить",
+                        Tag = request,
+                        Height = 35
+                    };
+
+                approve.Click += ApproveUnfreeze_Click;
+
+                reject.Click += RejectUnfreeze_Click;
+
+                panel.Children.Add(text);
+
+                panel.Children.Add(approve);
+
+                panel.Children.Add(reject);
+
+                border.Child = panel;
+
+                UnfreezeRequestsPanel.Children.Add(border);
+            }
+        }
+
+        private void ApproveUnfreeze_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            UnfreezeRequests request =
+                (UnfreezeRequests)((Button)sender).Tag;
+
+            request.IsApproved = true;
+
+            request.Users.IsFrozen = false;
+
+            request.Users.FreezeReason = null;
+
+            db.SaveChanges();
+
+            LoadUnfreezeRequests();
+
+            LoadUsers();
+
+            MessageBox.Show(
+                "Пользователь разморожен");
+        }
+
+        private void RejectUnfreeze_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            UnfreezeRequests request =
+                (UnfreezeRequests)((Button)sender).Tag;
+
+            request.IsApproved = false;
+
+            db.SaveChanges();
+
+            LoadUnfreezeRequests();
+
+            MessageBox.Show(
+                "Заявка отклонена");
         }
     }
 }
