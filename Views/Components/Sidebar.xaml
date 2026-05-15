@@ -33,6 +33,15 @@
                FontSize="24"/>
 
             </Button>
+            <Button Height="60"
+        Margin="10"
+        ToolTip="Автор"
+        Click="AuthorButton_Click">
+
+                <TextBlock Text="✍"
+               FontSize="24"/>
+
+            </Button>
 
         </StackPanel>
 

@@ -34,5 +34,12 @@ namespace UP_Markov.Views.Components
             MainWindow.Instance.MainFrame.Navigate(
                 new ListsPage());
         }
+        private void AuthorButton_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            MainWindow.Instance.MainFrame.Navigate(
+                new AuthorPage());
+        }
     }
 }
