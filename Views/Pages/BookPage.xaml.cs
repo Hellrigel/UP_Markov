@@ -1,28 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using UP_Markov.Data;
 
 namespace UP_Markov.Views.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для BookPage.xaml
-    /// </summary>
     public partial class BookPage : Page
     {
-        public BookPage()
+        private readonly Books book;
+
+        public BookPage(Books selectedBook)
         {
             InitializeComponent();
+
+            book = selectedBook;
+
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            TitleText.Text = book.Title;
+
+            AuthorText.Text =
+                $"Автор: {book.Users.DisplayName}";
+
+            DescriptionText.Text =
+                book.Description;
+        }
+
+        private void ReadButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            MessageBox.Show(book.Content);
         }
     }
 }
