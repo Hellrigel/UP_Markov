@@ -27,5 +27,12 @@ namespace UP_Markov.Views.Components
             MainWindow.Instance.MainFrame.Navigate(
                 new ProfilePage());
         }
+        private void ListsButton_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            MainWindow.Instance.MainFrame.Navigate(
+                new ListsPage());
+        }
     }
 }

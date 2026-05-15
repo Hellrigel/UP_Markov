@@ -24,6 +24,15 @@
                 <TextBlock Text="👤"
                            FontSize="24"/>
             </Button>
+            <Button Height="60"
+        Margin="10"
+        ToolTip="Списки"
+        Click="ListsButton_Click">
+
+                <TextBlock Text="📚"
+               FontSize="24"/>
+
+            </Button>
 
         </StackPanel>
 
