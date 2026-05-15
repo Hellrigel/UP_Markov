@@ -20,11 +20,15 @@ namespace UP_Markov.Views.Pages
 
             LoadGenres();
 
+            SortBox.SelectedIndex = 0;
+
             LoadBooks();
         }
 
         private void LoadGenres()
         {
+            GenreBox.Items.Clear();
+
             GenreBox.Items.Add("Все жанры");
 
             foreach (var genre in db.Genres)
@@ -37,64 +41,120 @@ namespace UP_Markov.Views.Pages
 
         private void LoadBooks()
         {
-            books = db.Books.ToList();
+            books = db.Books
+                .Where(x => !x.IsFrozen)
+                .ToList();
 
             ApplyFilters();
         }
 
         private void ApplyFilters()
         {
-            var filteredBooks = books.AsQueryable();
-
-            
+            var filteredBooks =
+                books.AsQueryable();
 
             string search =
-                SearchBox.Text.ToLower();
+                SearchBox.Text?
+                .ToLower()
+                .Trim();
+
+            // SEARCH
 
             if (!string.IsNullOrWhiteSpace(search))
             {
-                filteredBooks = filteredBooks.Where(x =>
-                    x.Title.ToLower().Contains(search) ||
-                    x.Users.DisplayName.ToLower().Contains(search));
+                filteredBooks =
+                    filteredBooks.Where(x =>
+
+                        x.Title.ToLower()
+                            .Contains(search)
+
+                        ||
+
+                        x.Users.DisplayName
+                            .ToLower()
+                            .Contains(search));
             }
 
-            
+            // GENRE
 
             if (GenreBox.SelectedItem != null &&
                 GenreBox.SelectedIndex != 0)
             {
                 string genre =
-                    GenreBox.SelectedItem.ToString();
+                    GenreBox.SelectedItem
+                    .ToString();
 
-                filteredBooks = filteredBooks.Where(x =>
-                    x.Genres.Any(g =>
-                        g.Name == genre));
+                filteredBooks =
+                    filteredBooks.Where(x =>
+
+                        x.Genres.Any(g =>
+                            g.Name == genre));
             }
 
-            
+            // SORT
 
-            if (SortBox.SelectedIndex == 0)
+            switch (SortBox.SelectedIndex)
             {
-                filteredBooks = filteredBooks
-                    .OrderBy(x => x.Title);
+                case 0:
+
+                    filteredBooks =
+                        filteredBooks
+                        .OrderBy(x => x.Title);
+
+                    break;
+
+                case 1:
+
+                    filteredBooks =
+                        filteredBooks
+                        .OrderByDescending(x =>
+
+                            x.Reviews.Any(r =>
+                                !r.IsFrozen)
+
+                            ?
+
+                            x.Reviews
+                                .Where(r => !r.IsFrozen)
+                                .Average(r => r.Rating)
+
+                            :
+
+                            0);
+
+                    break;
             }
 
-            else if (SortBox.SelectedIndex == 1)
-            {
-                filteredBooks = filteredBooks
-                    .OrderByDescending(x =>
-                        x.Reviews.Any()
-                            ? x.Reviews.Average(r => r.Rating)
-                            : 0);
-            }
-
-            ShowBooks(filteredBooks.ToList());
+            ShowBooks(
+                filteredBooks.ToList());
         }
 
         private void ShowBooks(
             List<Books> booksToShow)
         {
             BooksPanel.Children.Clear();
+
+            if (!booksToShow.Any())
+            {
+                TextBlock empty =
+                    new TextBlock()
+                    {
+                        Text =
+                            "Книги не найдены",
+
+                        FontSize = 24,
+
+                        Foreground =
+                            System.Windows.Media.Brushes.White,
+
+                        Margin =
+                            new System.Windows.Thickness(20)
+                    };
+
+                BooksPanel.Children.Add(empty);
+
+                return;
+            }
 
             foreach (var book in booksToShow)
             {
@@ -114,14 +174,20 @@ namespace UP_Markov.Views.Pages
             object sender,
             SelectionChangedEventArgs e)
         {
-            ApplyFilters();
+            if (IsLoaded)
+            {
+                ApplyFilters();
+            }
         }
 
         private void GenreBox_SelectionChanged(
             object sender,
             SelectionChangedEventArgs e)
         {
-            ApplyFilters();
+            if (IsLoaded)
+            {
+                ApplyFilters();
+            }
         }
     }
 }

@@ -290,7 +290,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\Covers\" />
     <Folder Include="Resources\Icons\" />
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +303,7 @@
       <DependentUpon>UP_MarkovModel.edmx</DependentUpon>
       <LastGenOutput>UP_MarkovModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="Resources\Covers\default.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

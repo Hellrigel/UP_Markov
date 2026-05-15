@@ -13,6 +13,7 @@
                        FontSize="36"
                        FontWeight="Bold"
                        Foreground="White"/>
+            
 
            
 
@@ -115,6 +116,9 @@
                        Margin="0 0 0 20"/>
 
             <StackPanel x:Name="ReviewsPanel"/>
+            <ComboBox x:Name="RatingBox"
+          Height="35"
+          Width="100"/>
 
         </StackPanel>
 

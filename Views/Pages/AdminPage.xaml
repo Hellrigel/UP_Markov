@@ -49,6 +49,12 @@
                        Margin="0 0 0 15"/>
 
             <StackPanel x:Name="UsersPanel"/>
+            <TextBlock Text="Замороженные книги"
+           FontSize="24"
+           Foreground="White"
+           Margin="0 30 0 15"/>
+
+            <StackPanel x:Name="FrozenBooksPanel"/>
 
         </StackPanel>
 

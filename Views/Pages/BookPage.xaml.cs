@@ -21,20 +21,22 @@ namespace UP_Markov.Views.Pages
                 .FirstOrDefault(x =>
                     x.Id == selectedBook.Id);
 
+            if (book == null)
+            {
+                MessageBox.Show(
+                    "Книга не найдена");
+
+                return;
+            }
+
             LoadBook();
 
             LoadRating();
 
-            LoadStatuses();
-
-            LoadReviewRatingBox();
+            LoadRatingBox();
 
             LoadReviews();
         }
-
-        
-        
-        
 
         private void LoadBook()
         {
@@ -42,23 +44,25 @@ namespace UP_Markov.Views.Pages
                 book.Title;
 
             AuthorText.Text =
-                $"Автор: {book.Users.DisplayName}";
+                $"Автор: " +
+                $"{book.Users.DisplayName}";
 
             DescriptionText.Text =
                 book.Description;
         }
 
-        
-        
-        
-
         private void LoadRating()
         {
             double rating = 0;
 
-            if (book.Reviews.Any())
+            var reviews =
+                book.Reviews
+                .Where(x => !x.IsFrozen);
+
+            if (reviews.Any())
             {
-                rating = book.Reviews
+                rating =
+                    reviews
                     .Average(x => x.Rating);
             }
 
@@ -66,111 +70,139 @@ namespace UP_Markov.Views.Pages
                 $"★ {rating:F1} / 10";
         }
 
-        
-        
-        
-
-        private void LoadStatuses()
+        private void LoadRatingBox()
         {
-            foreach (var status in db.ReadingStatuses)
-            {
-                StatusBox.Items.Add(status.Name);
-            }
+            RatingBox.Items.Clear();
 
-            StatusBox.SelectedIndex = 0;
-        }
-
-        
-        
-        
-
-        private void LoadReviewRatingBox()
-        {
             for (int i = 1; i <= 10; i++)
             {
-                ReviewRatingBox.Items.Add(i);
+                RatingBox.Items.Add(i);
             }
 
-            ReviewRatingBox.SelectedIndex = 4;
+            RatingBox.SelectedIndex = 4;
         }
-
-        
-        
-        
 
         private void LoadReviews()
         {
             ReviewsPanel.Children.Clear();
 
-            foreach (var review in book.Reviews
-                         .OrderByDescending(x => x.CreatedAt))
+            var reviews =
+                book.Reviews
+                .Where(x => !x.IsFrozen)
+                .OrderByDescending(x => x.Id)
+                .ToList();
+
+            if (!reviews.Any())
             {
-                Border border = new Border
-                {
-                    BorderBrush = Brushes.Gray,
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(10),
-                    Margin = new Thickness(0, 0, 0, 15),
-                    Padding = new Thickness(10)
-                };
+                TextBlock empty =
+                    new TextBlock()
+                    {
+                        Text =
+                            "Отзывов пока нет",
 
-                StackPanel panel = new StackPanel();
+                        FontSize = 18,
 
-                TextBlock userText = new TextBlock
-                {
-                    Text =
-                        review.Users.DisplayName,
+                        Foreground =
+                            Brushes.Gray
+                    };
 
-                    Foreground = Brushes.White,
+                ReviewsPanel.Children.Add(empty);
 
-                    FontWeight = FontWeights.Bold,
+                return;
+            }
 
-                    FontSize = 16
-                };
+            foreach (var review in reviews)
+            {
+                Border border =
+                    new Border()
+                    {
+                        BorderBrush =
+                            Brushes.Gray,
 
-                TextBlock ratingText = new TextBlock
-                {
-                    Text =
-                        $"★ {review.Rating}",
+                        BorderThickness =
+                            new Thickness(1),
 
-                    Foreground = Brushes.Gold,
+                        CornerRadius =
+                            new CornerRadius(10),
 
-                    Margin = new Thickness(0, 5, 0, 5)
-                };
+                        Padding =
+                            new Thickness(15),
 
-                TextBlock reviewText = new TextBlock
-                {
-                    Text =
-                        review.ReviewText,
+                        Margin =
+                            new Thickness(0, 0, 0, 15)
+                    };
 
-                    Foreground = Brushes.White,
+                StackPanel panel =
+                    new StackPanel();
 
-                    TextWrapping =
-                        TextWrapping.Wrap
-                };
+                TextBlock user =
+                    new TextBlock()
+                    {
+                        Text =
+                            review.Users
+                            .DisplayName,
 
-                Button complaintButton = new Button
-                {
-                    Content =
-                        "Пожаловаться",
+                        FontSize = 18,
 
-                    Tag = review,
+                        FontWeight =
+                            FontWeights.Bold,
 
-                    Height = 30,
+                        Foreground =
+                            Brushes.White
+                    };
 
-                    Margin = new Thickness(0, 10, 0, 0)
-                };
+                TextBlock text =
+                    new TextBlock()
+                    {
+                        Text =
+                            review.ReviewText,
 
-                complaintButton.Click +=
+                        TextWrapping =
+                            TextWrapping.Wrap,
+
+                        Margin =
+                            new Thickness(0, 10, 0, 10),
+
+                        Foreground =
+                            Brushes.White
+                    };
+
+                TextBlock rating =
+                    new TextBlock()
+                    {
+                        Text =
+                            $"★ {review.Rating}",
+
+                        FontSize = 16,
+
+                        Foreground =
+                            Brushes.Gold
+                    };
+
+                Button complain =
+                    new Button()
+                    {
+                        Content =
+                            "Пожаловаться",
+
+                        Tag = review,
+
+                        Height = 35,
+
+                        Margin =
+                            new Thickness(0, 10, 0, 0)
+                    };
+
+                complain.Click +=
                     ComplaintReview_Click;
 
-                panel.Children.Add(userText);
+                panel.Children.Add(user);
 
-                panel.Children.Add(ratingText);
+                panel.Children.Add(text);
 
-                panel.Children.Add(reviewText);
+                panel.Children.Add(rating);
 
-                panel.Children.Add(complaintButton);
+                panel.Children.Add(complain);
 
                 border.Child = panel;
 
@@ -178,31 +210,32 @@ namespace UP_Markov.Views.Pages
             }
         }
 
-        
-        
-        
-
-        private void ReadButton_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            MessageBox.Show(
-                book.Content);
-        }
-
-        
-        
-        
-
         private void AddReview_Click(
             object sender,
             RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(
-                    ReviewBox.Text))
+                ReviewBox.Text))
             {
                 MessageBox.Show(
-                    "Введите отзыв");
+                    "Введите текст отзыва");
+
+                return;
+            }
+
+            bool alreadyExists =
+                db.Reviews.Any(x =>
+
+                    x.BookId == book.Id
+                    &&
+
+                    x.UserId ==
+                    CurrentUser.User.Id);
+
+            if (alreadyExists)
+            {
+                MessageBox.Show(
+                    "Вы уже оставляли отзыв");
 
                 return;
             }
@@ -219,7 +252,7 @@ namespace UP_Markov.Views.Pages
                         ReviewBox.Text,
 
                     Rating =
-                        (int)ReviewRatingBox.SelectedItem,
+                        (int)RatingBox.SelectedItem,
 
                     IsFrozen = false
                 };
@@ -241,107 +274,31 @@ namespace UP_Markov.Views.Pages
                 "Отзыв добавлен");
         }
 
-       
-       
-        
-
-        private void AddToList_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            int statusId =
-                StatusBox.SelectedIndex + 1;
-
-            var existing =
-                db.UserBookLists
-                .FirstOrDefault(x =>
-
-                    x.UserId ==
-                    CurrentUser.User.Id
-
-                    &&
-
-                    x.BookId ==
-                    book.Id);
-
-            
-
-            if (existing != null)
-            {
-                existing.StatusId =
-                    statusId;
-            }
-
-            
-
-            else
-            {
-                UserBookLists item =
-                    new UserBookLists()
-                    {
-                        UserId =
-                            CurrentUser.User.Id,
-
-                        BookId =
-                            book.Id,
-
-                        StatusId =
-                            statusId
-                    };
-
-                db.UserBookLists.Add(item);
-            }
-
-            db.SaveChanges();
-
-            MessageBox.Show(
-                "Список обновлен");
-        }
-
-        
-       
-        
-
-        private void ComplaintBook_Click(
-            object sender,
-            RoutedEventArgs e)
-        {
-            Complaints complaint =
-                new Complaints()
-                {
-                    UserId =
-                        CurrentUser.User.Id,
-
-                    BookId =
-                        book.Id,
-
-                    ComplaintTypeId = 1,
-
-                    Reason =
-                        "Жалоба на книгу",
-
-                    IsResolved = false
-                };
-
-            db.Complaints.Add(
-                complaint);
-
-            db.SaveChanges();
-
-            MessageBox.Show(
-                "Жалоба отправлена");
-        }
-
-        
-        
-        
-
         private void ComplaintReview_Click(
             object sender,
             RoutedEventArgs e)
         {
             Reviews review =
                 (Reviews)((Button)sender).Tag;
+
+            bool exists =
+                db.Complaints.Any(x =>
+
+                    x.UserId ==
+                    CurrentUser.User.Id
+
+                    &&
+
+                    x.ReviewId ==
+                    review.Id);
+
+            if (exists)
+            {
+                MessageBox.Show(
+                    "Жалоба уже отправлена");
+
+                return;
+            }
 
             Complaints complaint =
                 new Complaints()
@@ -355,9 +312,7 @@ namespace UP_Markov.Views.Pages
                     ComplaintTypeId = 2,
 
                     Reason =
-                        "Жалоба на отзыв",
-
-                    IsResolved = false
+                        "Жалоба на отзыв"
                 };
 
             db.Complaints.Add(
@@ -367,6 +322,61 @@ namespace UP_Markov.Views.Pages
 
             MessageBox.Show(
                 "Жалоба отправлена");
+        }
+
+        private void ComplaintBook_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            bool exists =
+                db.Complaints.Any(x =>
+
+                    x.UserId ==
+                    CurrentUser.User.Id
+
+                    &&
+
+                    x.BookId ==
+                    book.Id);
+
+            if (exists)
+            {
+                MessageBox.Show(
+                    "Жалоба уже отправлена");
+
+                return;
+            }
+
+            Complaints complaint =
+                new Complaints()
+                {
+                    UserId =
+                        CurrentUser.User.Id,
+
+                    BookId =
+                        book.Id,
+
+                    ComplaintTypeId = 1,
+
+                    Reason =
+                        "Жалоба на книгу"
+                };
+
+            db.Complaints.Add(
+                complaint);
+
+            db.SaveChanges();
+
+            MessageBox.Show(
+                "Жалоба отправлена");
+        }
+
+        private void ReadButton_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                book.Content);
         }
     }
 }
