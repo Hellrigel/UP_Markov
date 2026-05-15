@@ -1,54 +1,64 @@
-﻿using System.Windows;
-using UP_Markov.Services;
+﻿using System;
+using System.Linq;
+using System.Windows;
+using UP_Markov.Data;
 
 namespace UP_Markov.Views.Windows
 {
     public partial class RegisterWindow : Window
     {
-        private readonly AuthService authService =
-            new AuthService();
-
         public RegisterWindow()
         {
             InitializeComponent();
         }
 
-        private void RegisterButton_Click(
-            object sender,
-            RoutedEventArgs e)
+        private void Register_Click(object sender, RoutedEventArgs e)
         {
-            bool result = authService.Register(
-                LoginBox.Text,
-                PasswordBox.Password,
-                EmailBox.Text,
-                DisplayNameBox.Text);
-
-            if (!result)
+            if (string.IsNullOrWhiteSpace(LoginBox.Text) ||
+                string.IsNullOrWhiteSpace(PassBox.Password) ||
+                string.IsNullOrWhiteSpace(EmailBox.Text))
             {
-                MessageBox.Show("Пользователь уже существует");
+                MessageBox.Show("Пожалуйста, заполните основные поля");
                 return;
             }
 
-            MessageBox.Show("Аккаунт создан");
+            try
+            {
+                using (var db = new UP_MarkovDBEntities())
+                {
+                    if (db.Users.Any(u => u.Login == LoginBox.Text))
+                    {
+                        MessageBox.Show("Пользователь с таким логином уже существует");
+                        return;
+                    }
 
-            LoginWindow loginWindow =
-                new LoginWindow();
+                    var newUser = new Users
+                    {
+                        Login = LoginBox.Text,
+                        Email = EmailBox.Text,
+                        DisplayName = string.IsNullOrWhiteSpace(DisplayNameBox.Text) ? LoginBox.Text : DisplayNameBox.Text,
+                        PasswordHash = PassBox.Password,
+                        RoleId = 1,
+                        IsFrozen = false,
+                        CreatedAt = DateTime.Now
+                    };
 
-            loginWindow.Show();
+                    db.Users.Add(newUser);
+                    db.SaveChanges();
 
-            Close();
+                    MessageBox.Show("Аккаунт успешно создан!");
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при регистрации: {ex.Message}");
+            }
         }
 
-        private void BackButton_Click(
-            object sender,
-            RoutedEventArgs e)
+        private void Back_Click(object sender, RoutedEventArgs e)
         {
-            LoginWindow loginWindow =
-                new LoginWindow();
-
-            loginWindow.Show();
-
-            Close();
+            this.Close();
         }
     }
 }
