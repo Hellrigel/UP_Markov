@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace UP_Markov.Helpers
@@ -13,26 +12,17 @@ namespace UP_Markov.Helpers
             {
                 if (string.IsNullOrWhiteSpace(path))
                 {
-                    path =
-                        "Resources/Covers/default.jpg";
+                    return null;
                 }
 
-                string fullPath =
-                    Path.Combine(
-                        AppDomain.CurrentDomain.BaseDirectory,
-                        path);
-
                 return new BitmapImage(
-                    new Uri(fullPath));
+                    new Uri(path,
+                    UriKind.RelativeOrAbsolute));
             }
 
             catch
             {
-                return new BitmapImage(
-                    new Uri(
-                        Path.Combine(
-                            AppDomain.CurrentDomain.BaseDirectory,
-                            "Resources/Covers/default.jpg")));
+                return null;
             }
         }
     }

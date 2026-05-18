@@ -303,6 +303,8 @@
       <DependentUpon>UP_MarkovModel.edmx</DependentUpon>
       <LastGenOutput>UP_MarkovModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="Resources\Covers\book2.jpg" />
+    <Resource Include="Resources\Covers\book1.jpg" />
     <Resource Include="Resources\Covers\default.jpg" />
   </ItemGroup>
   <ItemGroup>
