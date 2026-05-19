@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using UP_Markov.Views.Pages;
 
-namespace UP_Markov.Views.Windows
+namespace UP_Markov
 {
     public partial class MainWindow : Window
     {
@@ -13,7 +13,8 @@ namespace UP_Markov.Views.Windows
 
             Instance = this;
 
-            MainFrame.Navigate(new CatalogPage());
+            MainFrame.Navigate(
+                new CatalogPage());
         }
     }
 }

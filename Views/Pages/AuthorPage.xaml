@@ -3,50 +3,101 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Background="#1E1E1E">
 
-    <ScrollViewer>
-        <Grid Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-            <StackPanel Grid.Row="0" Margin="0 0 0 30">
-                <TextBlock Text="Добавление новой книги"
-                           FontSize="24"
-                           Foreground="White"
-                           Margin="0 0 0 15"/>
+        <StackPanel Margin="20">
 
-                <TextBox x:Name="TitleBox" Margin="0 0 0 10" Padding="5" ToolTip="Название книги" Background="White"/>
-                <TextBox x:Name="CoverBox" Margin="0 0 0 10" Padding="5" ToolTip="Ссылка на обложку" Background="White"/>
-                <TextBox x:Name="DescriptionBox" Height="60" Margin="0 0 0 10" Padding="5" AcceptsReturn="True" TextWrapping="Wrap" ToolTip="Описание книги" Background="White"/>
-                <TextBox x:Name="ContentBox" Height="100" Margin="0 0 0 10" Padding="5" AcceptsReturn="True" TextWrapping="Wrap" ToolTip="Текст книги" Background="White"/>
+            <!-- HEADER -->
 
-                <Button Content="Добавить книгу"
-                        Width="180"
-                        Height="40"
-                        HorizontalAlignment="Left"
-                        Click="AddBook_Click"/>
+            <TextBlock Text="Добавление новой книги"
+                       FontSize="32"
+                       Foreground="White"
+                       Margin="0 0 0 25"/>
+
+            <!-- TITLE -->
+
+            <TextBlock Text="Название книги"
+                       Foreground="White"
+                       FontSize="16"
+                       Margin="0 0 0 5"/>
+
+            <TextBox x:Name="TitleBox"
+                     Height="40"
+                     Margin="0 0 0 15"/>
+
+            <!-- DESCRIPTION -->
+
+            <TextBlock Text="Описание книги"
+                       Foreground="White"
+                       FontSize="16"
+                       Margin="0 0 0 5"/>
+
+            <TextBox x:Name="DescriptionBox"
+                     Height="100"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     Margin="0 0 0 15"/>
+
+            <!-- COVER -->
+
+            <TextBlock Text="Путь к обложке"
+                       Foreground="White"
+                       FontSize="16"
+                       Margin="0 0 0 5"/>
+
+            <TextBox x:Name="CoverBox"
+                     Height="40"
+                     Margin="0 0 0 15"/>
+
+            <!-- CONTENT -->
+
+            <TextBlock Text="Текст книги"
+                       Foreground="White"
+                       FontSize="16"
+                       Margin="0 0 0 5"/>
+
+            <TextBox x:Name="ContentBox"
+                     Height="220"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     Margin="0 0 0 20"/>
+
+            <!-- BUTTON -->
+
+            <Button Content="Добавить книгу"
+                    Width="220"
+                    Height="45"
+                    HorizontalAlignment="Left"
+                    Click="AddBook_Click"/>
+
+            <!-- MY BOOKS -->
+
+            <TextBlock Text="Мои книги"
+                       FontSize="30"
+                       Foreground="White"
+                       Margin="0 40 0 15"/>
+
+            <StackPanel x:Name="BooksPanel">
+
+                <TextBlock Text="У вас пока нет книг"
+                           Foreground="Gray"
+                           FontSize="18"/>
+
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Margin="0 0 0 30">
-                <TextBlock Text="Мои книги"
-                           FontSize="24"
-                           Foreground="White"
-                           Margin="0 0 0 15"/>
+            <!-- FROZEN BOOKS -->
 
-                <StackPanel x:Name="BooksPanel"/>
-            </StackPanel>
+            <TextBlock Text="Замороженные книги"
+                       FontSize="30"
+                       Foreground="#FF6666"
+                       Margin="0 40 0 15"/>
 
-            <StackPanel Grid.Row="2">
-                <TextBlock Text="Замороженные книги"
-                           FontSize="24"
-                           Foreground="IndianRed"
-                           Margin="0 0 0 15"/>
+            <StackPanel x:Name="FrozenBooksPanel"/>
 
-                <StackPanel x:Name="FrozenBooksPanel"/>
-            </StackPanel>
+        </StackPanel>
 
-        </Grid>
     </ScrollViewer>
+
 </Page>

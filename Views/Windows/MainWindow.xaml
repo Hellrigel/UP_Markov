@@ -1,24 +1,27 @@
-﻿<Window x:Class="UP_Markov.Views.Windows.MainWindow"
+﻿<Window x:Class="UP_Markov.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:components="clr-namespace:UP_Markov.Views.Components"
         Title="UP_Markov"
-        Height="700"
-        Width="1200"
-        WindowStartupLocation="CenterScreen"
-        Background="#1E1E1E">
+        Height="720"
+        Width="1280"
+        WindowStartupLocation="CenterScreen">
 
     <Grid>
 
         <Grid.ColumnDefinitions>
 
-            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="90"/>
 
             <ColumnDefinition Width="*"/>
 
         </Grid.ColumnDefinitions>
 
-        
+        <!-- SIDEBAR -->
+
+        <components:Sidebar Grid.Column="0"/>
+
+        <!-- CONTENT -->
 
         <Frame x:Name="MainFrame"
                Grid.Column="1"

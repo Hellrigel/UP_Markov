@@ -5,56 +5,26 @@
 
     <ScrollViewer>
 
-        <StackPanel Margin="20">
+        <StackPanel Margin="30">
 
             <TextBlock Text="Администрирование"
                        FontSize="32"
                        Foreground="White"
                        Margin="0 0 0 30"/>
 
-           
-
             <TextBlock Text="Жалобы"
                        FontSize="24"
-                       Foreground="White"
-                       Margin="0 0 0 15"/>
+                       Foreground="White"/>
 
             <StackPanel x:Name="ComplaintsPanel"
-                        Margin="0 0 0 40"/>
-           
-
-            <TextBlock Text="Заявки на автора"
-           FontSize="24"
-           Foreground="White"
-           Margin="0 0 0 15"/>
-
-            <StackPanel x:Name="AuthorRequestsPanel"
-            Margin="0 0 0 40"/>
-
-            
-
-            <TextBlock Text="Заявки на разморозку"
-           FontSize="24"
-           Foreground="White"
-           Margin="0 0 0 15"/>
-
-            <StackPanel x:Name="UnfreezeRequestsPanel"
-            Margin="0 0 0 40"/>
-
-            
+                        Margin="0 15 0 30"/>
 
             <TextBlock Text="Пользователи"
                        FontSize="24"
-                       Foreground="White"
-                       Margin="0 0 0 15"/>
+                       Foreground="White"/>
 
-            <StackPanel x:Name="UsersPanel"/>
-            <TextBlock Text="Замороженные книги"
-           FontSize="24"
-           Foreground="White"
-           Margin="0 30 0 15"/>
-
-            <StackPanel x:Name="FrozenBooksPanel"/>
+            <StackPanel x:Name="UsersPanel"
+                        Margin="0 15 0 30"/>
 
         </StackPanel>
 

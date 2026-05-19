@@ -3,77 +3,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="#252526">
 
-    <Grid>
+    <StackPanel>
 
-        <StackPanel>
+        <Button Content="📚"
+                Height="70"
+                FontSize="26"
+                Click="Catalog_Click"
+                ToolTip="Каталог"/>
 
-            
+        <Button Content="📖"
+                Height="70"
+                FontSize="26"
+                Click="Lists_Click"
+                ToolTip="Списки"/>
 
-            <Button x:Name="CatalogButton"
-                    Height="60"
-                    Margin="10"
-                    ToolTip="Каталог"
-                    Click="CatalogButton_Click">
+        <Button x:Name="AuthorButton"
+                Content="✍"
+                Height="70"
+                FontSize="26"
+                Click="Author_Click"
+                ToolTip="Автор"/>
 
-                <TextBlock Text="📚"
-                           FontSize="24"/>
+        <Button x:Name="AdminButton"
+                Content="⚙"
+                Height="70"
+                FontSize="26"
+                Click="Admin_Click"
+                ToolTip="Админ"/>
 
-            </Button>
+        <Button Content="👤"
+                Height="70"
+                FontSize="26"
+                Click="Profile_Click"
+                ToolTip="Профиль"/>
 
-            
-
-            <Button x:Name="ListsButton"
-                    Height="60"
-                    Margin="10"
-                    ToolTip="Списки"
-                    Click="ListsButton_Click">
-
-                <TextBlock Text="📖"
-                           FontSize="24"/>
-
-            </Button>
-
-            
-
-            <Button x:Name="AuthorButton"
-                    Height="60"
-                    Margin="10"
-                    ToolTip="Автор"
-                    Click="AuthorButton_Click">
-
-                <TextBlock Text="✍"
-                           FontSize="24"/>
-
-            </Button>
-
-            
-
-            <Button x:Name="AdminButton"
-                    Height="60"
-                    Margin="10"
-                    ToolTip="Администрирование"
-                    Click="AdminButton_Click">
-
-                <TextBlock Text="🛠"
-                           FontSize="24"/>
-
-            </Button>
-
-            
-
-            <Button x:Name="ProfileButton"
-                    Height="60"
-                    Margin="10"
-                    ToolTip="Профиль"
-                    Click="ProfileButton_Click">
-
-                <TextBlock Text="👤"
-                           FontSize="24"/>
-
-            </Button>
-
-        </StackPanel>
-
-    </Grid>
+    </StackPanel>
 
 </UserControl>

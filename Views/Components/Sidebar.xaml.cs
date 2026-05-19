@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using UP_Markov.Data;
 using UP_Markov.Views.Pages;
-using UP_Markov.Views.Windows;
 
 namespace UP_Markov.Views.Components
 {
@@ -17,24 +16,26 @@ namespace UP_Markov.Views.Components
 
         private void CheckRoles()
         {
-            
+            AdminButton.Visibility =
+                Visibility.Collapsed;
 
-            if (CurrentUser.User.RoleId == 1)
-            {
-                AuthorButton.Visibility =
-                    Visibility.Collapsed;
-            }
+            AuthorButton.Visibility =
+                Visibility.Collapsed;
 
-            
-
-            if (CurrentUser.User.RoleId != 3)
+            if (CurrentUser.User.RoleId == 3)
             {
                 AdminButton.Visibility =
-                    Visibility.Collapsed;
+                    Visibility.Visible;
+            }
+
+            if (CurrentUser.User.RoleId == 2)
+            {
+                AuthorButton.Visibility =
+                    Visibility.Visible;
             }
         }
 
-        private void CatalogButton_Click(
+        private void Catalog_Click(
             object sender,
             RoutedEventArgs e)
         {
@@ -42,7 +43,7 @@ namespace UP_Markov.Views.Components
                 new CatalogPage());
         }
 
-        private void ListsButton_Click(
+        private void Lists_Click(
             object sender,
             RoutedEventArgs e)
         {
@@ -50,7 +51,7 @@ namespace UP_Markov.Views.Components
                 new ListsPage());
         }
 
-        private void AuthorButton_Click(
+        private void Author_Click(
             object sender,
             RoutedEventArgs e)
         {
@@ -58,7 +59,7 @@ namespace UP_Markov.Views.Components
                 new AuthorPage());
         }
 
-        private void AdminButton_Click(
+        private void Admin_Click(
             object sender,
             RoutedEventArgs e)
         {
@@ -66,7 +67,7 @@ namespace UP_Markov.Views.Components
                 new AdminPage());
         }
 
-        private void ProfileButton_Click(
+        private void Profile_Click(
             object sender,
             RoutedEventArgs e)
         {

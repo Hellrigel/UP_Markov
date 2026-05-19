@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -145,26 +146,29 @@ namespace UP_Markov.Views.Pages
             }
 
             Books book =
-                new Books()
-                {
-                    Title =
-                        TitleBox.Text,
+     new Books()
+     {
+         Title =
+             TitleBox.Text,
 
-                    Description =
-                        DescriptionBox.Text,
+         Description =
+             DescriptionBox.Text,
 
-                    Content =
-                        ContentBox.Text,
+         Content =
+             ContentBox.Text,
 
-                    CoverPath =
-                        CoverBox.Text,
+         CoverPath =
+             CoverBox.Text,
 
-                    AuthorId =
-                        Data.CurrentUser
-                        .User.Id,
+         AuthorId =
+             Data.CurrentUser
+             .User.Id,
 
-                    IsFrozen = false
-                };
+         IsFrozen = false,
+
+         CreatedAt = DateTime.Now
+     };
+
 
             db.Books.Add(book);
 
